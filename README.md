@@ -31,7 +31,7 @@ Specify your file paths and tags.
 
 
 ## Run It
-`snakemake -s ~/tools/score_phase/Snakefile --configfile config.json`
+`snakemake -s Snakefile --verbose -p`
 
 
 # Input
