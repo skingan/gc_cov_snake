@@ -37,9 +37,10 @@ Specify your file paths and tags.
 # Input
 
 1. Reference sequence in fasta format
-2. HiFi reads in fasta
+2. FAI index for reference
+3. HiFi reads in fasta
 
 
 # Output
 
-`summary` directory contains `PDF` of boxplots of coverage.
+`output` directory contains `PDF` of boxplots of coverage and data file.

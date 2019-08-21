@@ -3,17 +3,21 @@ shell.prefix( "source env.sh ; set -eo pipefail ; " )
 configfile: "config.json"
 SAMPLES = config['samples'].keys()
 print(SAMPLES)
-REF = config['ref']
+REFERENCE = config['ref']
 FAI = config['fai']
-print(REF)
+BASENAME = REFERENCE.replace(".fasta","")
+print(REFERENCE)
+print(BASENAME)
 
 def _get_input_reads(wildcards):
     print(wildcards.name)
     return config['samples'][wildcards.name]
 
-
 rule dummy:
-     input: expand("{name}.gc.cov.txt", name=SAMPLES)
+   input: expand("output/{name}.100bp-win.gc.cov.txt", name=SAMPLES) 
+
+#rule dummy:
+#     input: expand("{name}.gc.cov.txt", name=SAMPLES)
 
 #rule plot:
 #     input: KMERS="merge/{name}.hapmers.counts"
@@ -22,32 +26,39 @@ rule dummy:
 #	  Rscript scripts/blobPlot.R --infile {input.KMERS} --prefix summary/{wildcards.name}
 #     """
 
-rule get_cov:
-   input: BAM = "{name}.aln.sort.bam", BED = config['ref'].replace("fasta","100bp-win.bed") 
-   output: {name}.gc.cov.txt
+rule merge:
+   input: COV = "bed/{name}.cov.bed", GC = f"bed/{BASENAME}.gc.bed"
+   output: DATA = "output/{name}.100bp-win.gc.cov.txt"
    shell: """
-      bedtools coverage -mean -sorted -b {input.BAM} -a {input.BED} > {output}
+      paste -d'\t' {input.GC} {input.COV} | awk '{{print $1, $2, $3, $4, $9}}' > {output.DATA}
+   """
+
+rule get_cov:
+   input: BAM = "bam/{name}.aln.sort.bam", BED = f"bed/{BASENAME}.100bp-win.bed" 
+   output: COV = "bed/{name}.cov.bed"
+   shell: """
+      bedtools coverage -mean -sorted -b {input.BAM} -a {input.BED} > {output.COV}
    """
 
 rule get_gc:
-   input: REF=config['ref'], BED={input.REF}.replace("fasta","100bp-win.bed")
-   output: {input.BED}.replace("bed","gc.bed")
+   input: REF=REFERENCE, BED=f"bed/{BASENAME}.100bp-win.bed"
+   output: GC=f"bed/{BASENAME}.gc.bed"
    shell: """
-      bedtools nuc -fi {input.REF} -bed {input.BED} | awk '{print $1, $2, $3, $5, $12}' > {output}
-      tail -n +2 {output} > tmp
-      mv tmp {output}
+      bedtools nuc -fi {input.REF} -bed {input.BED} | awk '{{print $1, $2, $3, $5, $12}}' > {output.GC}
+      tail -n +2 {output.GC} > tmp
+      mv tmp {output.GC}
    """
 
 rule make_windows:
-   input: FAI = config['fai']
-   output: BED = {input.REF}.replace("fasta","100bp-win.bed")
+   input: GENOME = FAI
+   output: BED = f"bed/{BASENAME}.100bp-win.bed"
    shell: """
-      bedtools makewindows -g {input.FAI} -w 100 > {output.BED}
+      bedtools makewindows -g {input.GENOME} -w 100 > {output.BED}
      """
 
 rule aln:
-   input: REF=config['ref'], READS= _get_input_reads
-   output: "{name}.aln.sort.bam"
+   input: REF=REFERENCE, READS= _get_input_reads
+   output: "bam/{name}.aln.sort.bam"
    message: "Mapping reads to ref."
    shell: """
       pbmm2 align --preset CCS --sort -j 8 -J 8 {input.REF} {input.READS} {output}
