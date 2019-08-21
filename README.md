@@ -3,7 +3,7 @@
 Tool for generating coverage boxplots for different GC% windows.
 
 # Dependencies
-`snakemake`
+`snakemake/5.4.3-ve`
 
 `R v3.4.1`
 
@@ -11,7 +11,7 @@ Tool for generating coverage boxplots for different GC% windows.
 
 `bedtools 2.27.1`
 
-`pbmm2`
+`pbmm2/current`
 
 
 # Usage
@@ -27,11 +27,14 @@ Tool for generating coverage boxplots for different GC% windows.
 ## Edit config.json
 
 Copy the config.json to the folder you want to run in.
-Specify your file paths and tags.
+
+
+## Export path
+`export PATH=$PATH:{snakemake clone dir}:{snakemake clone dir/scripts}
 
 
 ## Run It
-`snakemake -s Snakefile --verbose -p`
+`snakemake -s /path/to/gc_cov_snake/Snakefile --configfile config.json -d $PWD`
 
 
 # Input
