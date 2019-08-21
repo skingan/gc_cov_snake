@@ -1,0 +1,8 @@
+{
+    "samples" : {
+        "test1"          : "reads1.fasta",
+        "test2"          : "reads2.fasta"
+    },
+    "ref"  : "test.fa",
+    "fai"  : "test.fa.fai"
+}
