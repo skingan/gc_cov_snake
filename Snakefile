@@ -16,17 +16,14 @@ def _get_input_reads(wildcards):
     return config['samples'][wildcards.name]
 
 rule dummy:
-   input: expand("output/{name}.100bp-win.gc.cov.txt", name=SAMPLES) 
+   input: expand("output/{name}.pdf", name=SAMPLES) 
 
-#rule dummy:
-#     input: expand("{name}.gc.cov.txt", name=SAMPLES)
-
-#rule plot:
-#     input: KMERS="merge/{name}.hapmers.counts"
-#     output: "summary/{name}.pdf", "summary/{name}.txt"
-#     shell: """
-#	  Rscript scripts/blobPlot.R --infile {input.KMERS} --prefix summary/{wildcards.name}
-#     """
+rule plot:
+     input: DATA="output/{name}.100bp-win.gc.cov.txt"
+     output: "output/{name}.pdf"
+     shell: """
+	  Rscript scripts/boxplot.R --infile {input.DATA} --prefix {wildcards.name}
+     """
 
 rule merge:
    input: COV = "bed/{name}.cov.bed", GC = f"bed/{BASENAME}.gc.bed"
