@@ -1,11 +1,13 @@
 shell.prefix( "source env.sh ; set -eo pipefail ; " )
 
+import os
+
 configfile: "config.json"
 SAMPLES = config['samples'].keys()
 print(SAMPLES)
 REFERENCE = config['ref']
 FAI = config['fai']
-BASENAME = REFERENCE.replace(".fasta","")
+BASENAME = os.path.basename(REFERENCE).replace(".fasta","")
 print(REFERENCE)
 print(BASENAME)
 
