@@ -1,0 +1,17 @@
+{
+    "__default__" :
+    {
+    "S"   : "/bin/bash",
+    "N"   : "gc_cov",
+    "P"   : "-cwd",
+    "Q"   : "default",
+    "CPU" : "-pe smp 1",
+    "E"   : "logs",
+     "O"   : "logs"
+     },    
+    "aln"  :
+    {
+        "CPU"  : "-pe smp 8"
+    },
+}
+

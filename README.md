@@ -24,17 +24,24 @@ Tool for generating coverage boxplots for different GC% windows.
 `module load snakemake/5.4.3-ve`
 
 
-## Edit config.json
+## Edit configs
 
-Copy the config.json to the folder you want to run in.
+Copy config.json and cluster.config.sge.json to the folder you want to run in and edit.
 
 
 ## Export path
 `export PATH=$PATH:{snakemake clone dir}:{snakemake clone dir/scripts}
 
 
-## Run It
+## Run It Locally
 `snakemake -s /path/to/gc_cov_snake/Snakefile --configfile config.json -d $PWD`
+
+
+## Run it on cluster
+snakemake -j 10 --cluster-config /path/to/cluster.config.sge.json \
+--configfile /path/to/config.json \
+--cluster "qsub -S {cluster.S} -N {cluster.N} {cluster.P} -q {cluster.Q} {cluster.CPU} -e {cluster.E} -o {cluster.O} -V" \
+-s /path/to/Snakefile --verbose -p -d $PWD
 
 
 # Input
