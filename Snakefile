@@ -29,7 +29,7 @@ rule merge:
    input: COV = "bed/{name}.cov.bed", GC = f"bed/{BASENAME}.gc.bed"
    output: DATA = "output/{name}.100bp-win.gc.cov.txt"
    shell: """
-      paste -d'\t' {input.GC} {input.COV} | awk '{{print $1, $2, $3, $4, $9}}' > {output.DATA}
+      paste -d'\t' {input.GC} {input.COV} | awk '{{print $1, $2, $3, $4, $5, $6, $7, $8, $9, $13}}' > {output.DATA}
    """
 
 rule get_cov:
@@ -43,7 +43,7 @@ rule get_gc:
    input: REF=REFERENCE, BED=f"bed/{BASENAME}.100bp-win.bed"
    output: GC=f"bed/{BASENAME}.gc.bed"
    shell: """
-      bedtools nuc -fi {input.REF} -bed {input.BED} | awk '{{print $1, $2, $3, $5, $12}}' > {output.GC}
+      bedtools nuc -fi {input.REF} -bed {input.BED} | awk '{{print $1, $2, $3, $5, $6/$12, $7/$12, $8/$12, $9/$12, $12}}' > {output.GC}
       tail -n +2 {output.GC} > tmp
       mv tmp {output.GC}
    """
