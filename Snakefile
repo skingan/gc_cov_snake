@@ -22,7 +22,7 @@ rule plot:
    input: DATA="output/{name}.100bp-win.gc.cov.txt"
    output: "output/{name}.pdf"
    shell: """
-      boxplot.R --infile {input.DATA} --prefix {wildcards.name}
+      scripts/boxplot.R --infile {input.DATA} --prefix {wildcards.name}
    """
 
 rule merge:
